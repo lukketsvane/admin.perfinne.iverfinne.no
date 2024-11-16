@@ -2,6 +2,8 @@ import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
 import './globals.css'
 
+export const dynamic = 'force-dynamic'
+
 export default async function RootLayout({
   children,
 }: {
@@ -9,7 +11,11 @@ export default async function RootLayout({
 }) {
   const supabase = createServerComponentClient({ cookies })
 
-  await supabase.auth.getSession()
+  try {
+    await supabase.auth.getSession()
+  } catch (error) {
+    console.error('Error getting session:', error)
+  }
 
   return (
     <html lang="en">

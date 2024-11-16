@@ -1,5 +1,5 @@
-import { redirect } from 'next/navigation'
+import { BlockPage } from "@/components/app-page"
 
-export default function Home() {
-  redirect('/login')
+export default function Page() {
+  return <BlockPage />
 }

@@ -1,7 +1,6 @@
 'use client'
 
 import { useState } from 'react'
-import { createClientComponentClient } from '@supabase/auth-helpers-nextjs'
 import { useRouter } from 'next/navigation'
 import { Button } from "@/components/ui/button"
 import { Input } from "@/components/ui/input"
@@ -10,34 +9,28 @@ import { Label } from "@/components/ui/label"
 import { Alert, AlertDescription, AlertTitle } from "@/components/ui/alert"
 import { Loader2, AlertCircle } from 'lucide-react'
 
+const ADMIN_EMAIL = 'per@perfinne.no'
+const ADMIN_PASSWORD = 'Leik94Iver97'
+
 export default function Login() {
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState<string | null>(null)
   const [isLoading, setIsLoading] = useState(false)
   const router = useRouter()
-  const supabase = createClientComponentClient()
 
   const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault()
     setIsLoading(true)
     setError(null)
 
-    try {
-      const { error } = await supabase.auth.signInWithPassword({
-        email,
-        password,
-      })
-
-      if (error) throw error
-
+    if (email === ADMIN_EMAIL && password === ADMIN_PASSWORD) {
       router.push('/admin')
-      router.refresh()
-    } catch (err) {
+    } else {
       setError('Invalid email or password')
-    } finally {
-      setIsLoading(false)
     }
+
+    setIsLoading(false)
   }
 
   return (

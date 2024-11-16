@@ -1,5 +1,6 @@
 import { createServerComponentClient } from '@supabase/auth-helpers-nextjs'
 import { cookies } from 'next/headers'
+import './globals.css'
 
 export default async function RootLayout({
   children,
@@ -8,14 +9,12 @@ export default async function RootLayout({
 }) {
   const supabase = createServerComponentClient({ cookies })
 
-  const {
-    data: { session },
-  } = await supabase.auth.getSession()
+  await supabase.auth.getSession()
 
   return (
     <html lang="en">
-      <body>
-        <main>{children}</main>
+      <body className="min-h-screen bg-background font-sans antialiased">
+        <main className="container mx-auto px-4 py-8">{children}</main>
       </body>
     </html>
   )

@@ -10,16 +10,24 @@ export async function middleware(req: NextRequest) {
     data: { session },
   } = await supabase.auth.getSession()
 
-  if (!session && req.nextUrl.pathname.startsWith('/admin')) {
-    const redirectUrl = req.nextUrl.clone()
-    redirectUrl.pathname = '/login'
-    redirectUrl.searchParams.set(`redirectedFrom`, req.nextUrl.pathname)
-    return NextResponse.redirect(redirectUrl)
+  if (!session) {
+    return NextResponse.redirect(new URL('/login', req.url))
+  }
+
+  // Check if the user has the super_admin role
+  const { data: userData, error } = await supabase
+    .from('users')
+    .select('role')
+    .eq('id', session.user.id)
+    .single()
+
+  if (error || userData.role !== 'super_admin') {
+    return NextResponse.redirect(new URL('/unauthorized', req.url))
   }
 
   return res
 }
 
 export const config = {
-  matcher: ['/admin/:path*', '/login'],
+  matcher: '/admin/:path*',
 }
